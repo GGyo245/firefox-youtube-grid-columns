@@ -14,11 +14,11 @@ function renderValue(value) {
 
 async function getActiveYouTubeTabId() {
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-  if (!tabs.length) throw new Error("활성 탭을 찾지 못했습니다.");
+  if (!tabs.length) throw new Error("Could not find the active tab.");
 
   const tab = tabs[0];
   if (!tab.url || !tab.url.includes("youtube.com")) {
-    throw new Error("유튜브 탭에서만 적용할 수 있습니다.");
+    throw new Error("This works only on YouTube tabs.");
   }
 
   return tab.id;
@@ -46,12 +46,12 @@ applyBtn.addEventListener("click", async () => {
       columns
     });
 
-    setStatus("적용되었습니다.");
+    setStatus("Applied.");
   } catch (error) {
-    setStatus(`실패: ${error.message}`);
+    setStatus(`Failed: ${error.message}`);
   }
 });
 
 loadSavedColumns().catch((error) => {
-  setStatus(`초기화 실패: ${error.message}`);
+  setStatus(`Init failed: ${error.message}`);
 });
