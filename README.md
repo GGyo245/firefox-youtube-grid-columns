@@ -7,7 +7,7 @@ Control how many videos appear per row on YouTube home pages in Firefox (2 to 8 
 - Set YouTube grid columns from 2 to 8
 - Apply changes instantly from the popup slider
 - Automatically save and reuse your selected value
-- Keep Shorts/shelf sections full-width for stable layout
+- Hide Shorts shelves to keep the main video grid clean
 
 ## Usage
 

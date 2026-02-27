@@ -3,7 +3,10 @@ const MIN_COLUMNS = 2;
 const MAX_COLUMNS = 8;
 const STYLE_ID = "yt-grid-columns-controller-style";
 const FULL_WIDTH_CLASS = "yt-grid-columns-controller-full-width";
+const HIDE_SHORTS_CLASS = "yt-grid-columns-controller-hide-shorts";
 let gridObserver = null;
+let rootObserver = null;
+let currentColumns = DEFAULT_COLUMNS;
 
 function clampColumns(value) {
   const number = Number(value);
@@ -23,18 +26,21 @@ function ensureStyleTag() {
 
 function applyColumns(columns) {
   const safeColumns = clampColumns(columns);
+  currentColumns = safeColumns;
   const styleTag = ensureStyleTag();
 
   styleTag.textContent = `
     ytd-rich-grid-renderer {
       --yt-grid-columns-controller-count: ${safeColumns};
-      --yt-grid-columns-controller-gap: 16px;
+      --yt-grid-columns-controller-column-gap: 16px;
+      --yt-grid-columns-controller-row-gap: 24px;
     }
 
     ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer {
       display: grid !important;
       grid-template-columns: repeat(var(--yt-grid-columns-controller-count), minmax(0, 1fr)) !important;
-      gap: var(--yt-grid-columns-controller-gap) !important;
+      column-gap: var(--yt-grid-columns-controller-column-gap) !important;
+      row-gap: var(--yt-grid-columns-controller-row-gap) !important;
       align-items: start !important;
     }
 
@@ -52,9 +58,13 @@ function applyColumns(columns) {
       width: 100% !important;
       max-width: 100% !important;
     }
+
+    ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > .${HIDE_SHORTS_CLASS} {
+      display: none !important;
+    }
   `;
 
-  markFullWidthItems();
+  markSpecialItems();
   ensureGridObserver();
 }
 
@@ -64,12 +74,49 @@ function isFullWidthItem(item) {
   );
 }
 
-function markFullWidthItems() {
-  const items = document.querySelectorAll(
-    "ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > ytd-rich-item-renderer"
-  );
+function isShortsItem(item) {
+  if (!item) return false;
+  const tagName = item.tagName?.toLowerCase();
 
+  if (tagName === "ytd-rich-section-renderer") {
+    return Boolean(item.querySelector(":scope > #content > ytd-rich-shelf-renderer[is-shorts]"));
+  }
+
+  if (tagName === "ytd-rich-item-renderer") {
+    return Boolean(
+      item.querySelector(
+        ":scope ytd-rich-shelf-renderer[is-shorts], :scope ytm-shorts-lockup-view-model-v2, :scope ytm-shorts-lockup-view-model, :scope a[href*='/shorts/']"
+      )
+    );
+  }
+
+  if (item.matches("ytd-reel-shelf-renderer")) return true;
+  return false;
+}
+
+function markSpecialItems() {
+  const container = document.querySelector("ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer");
+  if (!container) return;
+
+  const children = Array.from(container.children);
+  for (const child of children) {
+    const shorts = isShortsItem(child);
+    child.classList.toggle(HIDE_SHORTS_CLASS, shorts);
+    if (shorts) {
+      child.style.setProperty("display", "none", "important");
+    } else {
+      child.style.removeProperty("display");
+    }
+  }
+
+  const items = children.filter(
+    (node) => node.tagName && node.tagName.toLowerCase() === "ytd-rich-item-renderer"
+  );
   for (const item of items) {
+    if (item.classList.contains(HIDE_SHORTS_CLASS)) {
+      item.classList.remove(FULL_WIDTH_CLASS);
+      continue;
+    }
     item.classList.toggle(FULL_WIDTH_CLASS, isFullWidthItem(item));
   }
 }
@@ -83,10 +130,24 @@ function ensureGridObserver() {
   }
 
   gridObserver = new MutationObserver(() => {
-    markFullWidthItems();
+    markSpecialItems();
   });
 
   gridObserver.observe(container, {
+    childList: true,
+    subtree: true
+  });
+}
+
+function ensureRootObserver() {
+  if (rootObserver) return;
+
+  rootObserver = new MutationObserver(() => {
+    markSpecialItems();
+    ensureGridObserver();
+  });
+
+  rootObserver.observe(document.documentElement, {
     childList: true,
     subtree: true
   });
@@ -108,6 +169,11 @@ browser.storage.onChanged.addListener((changes, areaName) => {
   applyColumns(changes.youtubeColumns.newValue);
 });
 
+document.addEventListener("yt-navigate-finish", () => {
+  applyColumns(currentColumns);
+});
+
+ensureRootObserver();
 loadAndApply().catch(() => {
   applyColumns(DEFAULT_COLUMNS);
 });
