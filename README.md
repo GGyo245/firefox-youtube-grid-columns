@@ -1,18 +1,35 @@
 # Firefox YouTube Grid Columns Controller
 
-유튜브 홈 화면에서 한 줄에 보이는 영상 개수를 2~8개 사이로 조절하는 Firefox 확장입니다.
+Control how many videos appear per row on YouTube home pages in Firefox (2 to 8 columns).
 
-## 설치
+## Features
 
-1. Firefox 주소창에 `about:debugging#/runtime/this-firefox` 입력
-2. `Load Temporary Add-on...` 클릭
-3. `/home/geegun/firefox-youtube-grid-control/manifest.json` 선택
+- Set YouTube grid columns from 2 to 8
+- Apply changes instantly from the popup slider
+- Automatically save and reuse your selected value
+- Keep Shorts/shelf sections full-width for stable layout
 
-## 사용 방법
+## Usage
 
-1. 유튜브(`youtube.com`) 페이지를 엽니다.
-2. 확장 아이콘을 클릭합니다.
-3. 슬라이더로 열 개수를 선택합니다.
-4. `적용` 버튼을 누릅니다.
+1. Open a `youtube.com` page.
+2. Click the extension icon.
+3. Choose the number of columns with the slider.
+4. Click `Apply`.
 
-설정 값은 자동 저장되어 다음에도 유지됩니다.
+## Privacy
+
+- No data collection
+- No external network requests
+
+## Permissions
+
+- `storage`: save your column setting
+- `*://www.youtube.com/*`: apply layout changes on YouTube pages
+
+## Development
+
+For local loading, testing, and release workflow, see [DEV.md](DEV.md).
+
+## Credits
+
+Built with Codex (GPT-5.3).
