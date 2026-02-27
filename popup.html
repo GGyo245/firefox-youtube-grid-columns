@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube Grid Columns</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>유튜브 열 개수</h1>
+      <p class="hint">한 줄에 보일 영상 개수: <strong id="valueText">4</strong></p>
+      <input id="columnRange" type="range" min="2" max="8" step="1" value="4" />
+      <button id="applyBtn" type="button">적용</button>
+      <p id="statusText" class="status"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
