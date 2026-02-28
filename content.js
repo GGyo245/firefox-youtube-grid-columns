@@ -79,7 +79,11 @@ function isShortsItem(item) {
   const tagName = item.tagName?.toLowerCase();
 
   if (tagName === "ytd-rich-section-renderer") {
-    return Boolean(item.querySelector(":scope > #content > ytd-rich-shelf-renderer[is-shorts]"));
+    return Boolean(
+      item.querySelector(
+        ":scope > #content > ytd-rich-shelf-renderer[is-shorts], :scope > #content > ytd-chips-shelf-with-video-shelf-renderer"
+      )
+    );
   }
 
   if (tagName === "ytd-rich-item-renderer") {
