@@ -46,7 +46,6 @@ Privacy:
 ## Category Suggestion
 - Shopping / Search Tools / Appearance
 
-## Release Notes (0.1.0)
-- Initial release
-- Adjustable YouTube grid columns (2~8)
-- Shorts shelf hiding
+## Release Notes (0.1.2)
+- Hide additional recommendation shelf blocks (`ytd-chips-shelf-with-video-shelf-renderer`) on home feed
+- Keep grid behavior unchanged while removing extra shelf sections
