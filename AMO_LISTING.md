@@ -46,6 +46,6 @@ Privacy:
 ## Category Suggestion
 - Shopping / Search Tools / Appearance
 
-## Release Notes (0.1.2)
-- Hide additional recommendation shelf blocks (`ytd-chips-shelf-with-video-shelf-renderer`) on home feed
-- Keep grid behavior unchanged while removing extra shelf sections
+## Release Notes (0.1.3)
+- Hide additional home shelf sections such as news shelf blocks
+- Add left/right feed padding adjustment (left 20px, right 30px) for better spacing

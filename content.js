@@ -41,6 +41,9 @@ function applyColumns(columns) {
       grid-template-columns: repeat(var(--yt-grid-columns-controller-count), minmax(0, 1fr)) !important;
       column-gap: var(--yt-grid-columns-controller-column-gap) !important;
       row-gap: var(--yt-grid-columns-controller-row-gap) !important;
+      padding-left: 20px !important;
+      padding-right: 30px !important;
+      box-sizing: border-box !important;
       align-items: start !important;
     }
 
@@ -79,10 +82,21 @@ function isShortsItem(item) {
   const tagName = item.tagName?.toLowerCase();
 
   if (tagName === "ytd-rich-section-renderer") {
+    const shelfTitle = item
+      .querySelector(":scope > #content > ytd-rich-shelf-renderer #title")
+      ?.textContent?.trim()
+      ?.toLowerCase();
+    const isNewsShelf = Boolean(
+      shelfTitle &&
+        ["뉴스 속보", "breaking news", "top news", "news", "ニュース速報", "速報ニュース"].some((keyword) =>
+          shelfTitle.includes(keyword)
+        )
+    );
+
     return Boolean(
       item.querySelector(
         ":scope > #content > ytd-rich-shelf-renderer[is-shorts], :scope > #content > ytd-chips-shelf-with-video-shelf-renderer"
-      )
+      ) || isNewsShelf
     );
   }
 
