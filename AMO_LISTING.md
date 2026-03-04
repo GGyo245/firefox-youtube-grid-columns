@@ -46,6 +46,9 @@ Privacy:
 ## Category Suggestion
 - Shopping / Search Tools / Appearance
 
+## Release Notes (0.1.4)
+- Scope extension to YouTube home and main feed pages only (reduced match patterns)
+
 ## Release Notes (0.1.3)
 - Hide additional home shelf sections such as news shelf blocks
 - Add left/right feed padding adjustment (left 20px, right 30px) for better spacing
