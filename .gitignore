@@ -1,0 +1,9 @@
+# Build artifacts / store upload bundles
+*.xpi
+*.zip
+
+# Generated icon exports (source uses icon.svg)
+icon-96.*
+icon-128.*
+icon-512.*
+

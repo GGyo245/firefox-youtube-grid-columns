@@ -22,7 +22,12 @@
   "permissions": [
     "storage",
     "tabs",
-    "*://www.youtube.com/*"
+    "*://www.youtube.com/",
+    "*://www.youtube.com/feed/subscriptions",
+    "*://www.youtube.com/feed/trending",
+    "*://www.youtube.com/feed/explore",
+    "*://www.youtube.com/feed/library",
+    "*://www.youtube.com/feed/history"
   ],
   "browser_action": {
     "default_title": "YT Grid Columns",
@@ -30,7 +35,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*"],
+      "matches": [
+        "*://www.youtube.com/",
+        "*://www.youtube.com/feed/subscriptions",
+        "*://www.youtube.com/feed/trending",
+        "*://www.youtube.com/feed/explore",
+        "*://www.youtube.com/feed/library",
+        "*://www.youtube.com/feed/history"
+      ],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
