@@ -40,15 +40,16 @@ body {
   color: var(--ytgc-fg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 14px;
 }
 
 .wrap {
-  margin: 10px;
-  padding: 14px 14px 12px;
-  background: var(--ytgc-surface);
-  border-radius: 14px;
-  box-shadow: 0 0 0 1px var(--ytgc-border) inset, var(--ytgc-shadow);
-  backdrop-filter: blur(8px);
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
   animation: ytgc-pop 160ms ease-out;
 }
 
