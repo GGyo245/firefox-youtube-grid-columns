@@ -48,6 +48,7 @@ Privacy:
 
 ## Release Notes (0.1.4)
 - Scope extension to YouTube home and main feed pages only (reduced match patterns)
+- Theme popup UI to match YouTube dark/light mode
 
 ## Release Notes (0.1.3)
 - Hide additional home shelf sections such as news shelf blocks
