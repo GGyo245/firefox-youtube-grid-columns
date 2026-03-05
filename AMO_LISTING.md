@@ -18,10 +18,9 @@
 - 설정 자동 저장
 - 쇼츠 선반 섹션 숨김
 
-권한 안내:
-- storage: 열 개수 설정 저장
-- tabs: 현재 활성 탭에 즉시 적용
-- www.youtube.com (홈/주요 피드): 유튜브 페이지에서 레이아웃 적용
+필수 권한:
+- 브라우저 탭에 접근
+- www.youtube.com에서 사용자의 데이터에 접근
 
 개인정보:
 - 데이터 수집 없음
@@ -36,10 +35,9 @@ Features:
 - Setting is saved automatically
 - Shorts shelves are hidden
 
-Permissions:
-- storage: save column setting
-- tabs: apply settings to the active tab
-- www.youtube.com (Home and main feed pages): apply layout changes on supported pages
+Required permissions:
+- Access browser tabs
+- Access your data for www.youtube.com
 
 Privacy:
 - No data collection
