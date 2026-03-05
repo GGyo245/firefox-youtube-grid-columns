@@ -4,6 +4,11 @@ const columnRange = document.getElementById("columnRange");
 const applyBtn = document.getElementById("applyBtn");
 const statusText = document.getElementById("statusText");
 
+function isConnectionError(message) {
+  if (!message) return false;
+  return /could not establish connection|receiving end does not exist|message port closed/i.test(message);
+}
+
 function setRangeFill(value) {
   const min = Number(columnRange.min) || 0;
   const max = Number(columnRange.max) || 100;
@@ -82,7 +87,12 @@ applyBtn.addEventListener("click", async () => {
 
     setStatus("Applied.");
   } catch (error) {
-    setStatus(`Failed: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    if (isConnectionError(message)) {
+      setStatus("Please refresh the YouTube page and try again.");
+      return;
+    }
+    setStatus(`Failed: ${message}`);
   }
 });
 
