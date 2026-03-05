@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.5
+- Show a refresh hint when the popup cannot connect to the YouTube page
+
 ## 0.1.4
 - Scope extension to YouTube home and main feed pages only (reduced match patterns)
 - Theme popup UI to match YouTube dark/light mode
