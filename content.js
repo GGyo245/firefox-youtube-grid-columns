@@ -4,6 +4,7 @@ const MAX_COLUMNS = 8;
 const STYLE_ID = "yt-grid-columns-controller-style";
 const FULL_WIDTH_CLASS = "yt-grid-columns-controller-full-width";
 const HIDE_SHORTS_CLASS = "yt-grid-columns-controller-hide-shorts";
+const HIDE_ADS_CLASS = "yt-grid-columns-controller-hide-ads";
 let gridObserver = null;
 let rootObserver = null;
 let currentColumns = DEFAULT_COLUMNS;
@@ -102,6 +103,10 @@ function applyColumns(columns) {
     ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > .${HIDE_SHORTS_CLASS} {
       display: none !important;
     }
+
+    ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > .${HIDE_ADS_CLASS} {
+      display: none !important;
+    }
   `;
 
   markSpecialItems();
@@ -149,6 +154,16 @@ function isShortsItem(item) {
   return false;
 }
 
+function isAdItem(item) {
+  if (!item) return false;
+  return Boolean(
+    item.querySelector(
+      // Home/feed in-grid ads are typically rendered via ytd-ad-slot-renderer.
+      ":scope ytd-ad-slot-renderer, :scope ytd-in-feed-ad-layout-renderer, :scope ytd-display-ad-renderer, :scope ytd-promoted-sparkles-web-renderer"
+    )
+  );
+}
+
 function markSpecialItems() {
   const container = document.querySelector("ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer");
   if (!container) return;
@@ -156,8 +171,10 @@ function markSpecialItems() {
   const children = Array.from(container.children);
   for (const child of children) {
     const shorts = isShortsItem(child);
+    const ad = isAdItem(child);
     child.classList.toggle(HIDE_SHORTS_CLASS, shorts);
-    if (shorts) {
+    child.classList.toggle(HIDE_ADS_CLASS, ad);
+    if (shorts || ad) {
       child.style.setProperty("display", "none", "important");
     } else {
       child.style.removeProperty("display");
@@ -168,7 +185,7 @@ function markSpecialItems() {
     (node) => node.tagName && node.tagName.toLowerCase() === "ytd-rich-item-renderer"
   );
   for (const item of items) {
-    if (item.classList.contains(HIDE_SHORTS_CLASS)) {
+    if (item.classList.contains(HIDE_SHORTS_CLASS) || item.classList.contains(HIDE_ADS_CLASS)) {
       item.classList.remove(FULL_WIDTH_CLASS);
       continue;
     }
