@@ -128,22 +128,18 @@ button {
   border-radius: 12px;
   padding: 10px 12px;
   margin-top: 8px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--ytgc-btn-bg) 92%, #ffffff) 0%, var(--ytgc-btn-bg) 100%);
+  background: var(--ytgc-btn-bg);
   color: var(--ytgc-btn-fg);
   cursor: pointer;
   font-weight: 650;
   letter-spacing: 0.2px;
-  box-shadow: 0 10px 22px color-mix(in srgb, var(--ytgc-btn-bg) 22%, transparent);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 8px 18px rgba(0, 0, 0, 0.14);
   transition: transform 120ms ease, filter 120ms ease, background 120ms ease;
 }
 
 button:hover {
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--ytgc-btn-bg-hover) 92%, #ffffff) 0%,
-    var(--ytgc-btn-bg-hover) 100%
-  );
-  filter: saturate(1.06);
+  background: var(--ytgc-btn-bg-hover);
+  filter: none;
 }
 
 button:active {
