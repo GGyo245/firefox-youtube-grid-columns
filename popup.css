@@ -12,6 +12,8 @@ body {
   --ytgc-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
   --ytgc-accent: #2563eb;
   --ytgc-accent-2: #60a5fa;
+  --ytgc-track: rgba(15, 23, 42, 0.16);
+  --ytgc-range-pct: 50%;
   --ytgc-btn-bg: var(--ytgc-accent);
   --ytgc-btn-bg-hover: #1d4ed8;
   --ytgc-btn-fg: #ffffff;
@@ -27,6 +29,7 @@ body.theme-dark {
   --ytgc-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   --ytgc-accent: #3ea6ff;
   --ytgc-accent-2: #7dd3fc;
+  --ytgc-track: rgba(148, 163, 184, 0.24);
   --ytgc-btn-bg: var(--ytgc-accent);
   --ytgc-btn-bg-hover: #65b8ff;
   --ytgc-btn-fg: #0b1220;
@@ -92,7 +95,13 @@ input[type="range"]:focus {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--ytgc-accent) 0%, var(--ytgc-accent-2) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--ytgc-accent) 0%,
+    var(--ytgc-accent) var(--ytgc-range-pct),
+    var(--ytgc-track) var(--ytgc-range-pct),
+    var(--ytgc-track) 100%
+  );
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -110,7 +119,13 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-moz-range-track {
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--ytgc-accent) 0%, var(--ytgc-accent-2) 100%);
+  background: var(--ytgc-track);
+}
+
+input[type="range"]::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ytgc-accent);
 }
 
 input[type="range"]::-moz-range-thumb {

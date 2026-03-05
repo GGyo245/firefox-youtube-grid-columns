@@ -4,6 +4,17 @@ const columnRange = document.getElementById("columnRange");
 const applyBtn = document.getElementById("applyBtn");
 const statusText = document.getElementById("statusText");
 
+function setRangeFill(value) {
+  const min = Number(columnRange.min) || 0;
+  const max = Number(columnRange.max) || 100;
+  const num = Number(value);
+  if (!Number.isFinite(num) || max <= min) return;
+
+  const pct = ((num - min) / (max - min)) * 100;
+  const clamped = Math.max(0, Math.min(100, pct));
+  document.documentElement.style.setProperty("--ytgc-range-pct", `${clamped}%`);
+}
+
 function setTheme(theme) {
   const isDark = theme === "dark";
   document.body.classList.toggle("theme-dark", isDark);
@@ -16,6 +27,7 @@ function setStatus(message) {
 
 function renderValue(value) {
   valueText.textContent = String(value);
+  setRangeFill(value);
 }
 
 async function getActiveYouTubeTabId() {
