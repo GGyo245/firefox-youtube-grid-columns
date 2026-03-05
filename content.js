@@ -8,6 +8,43 @@ let gridObserver = null;
 let rootObserver = null;
 let currentColumns = DEFAULT_COLUMNS;
 
+function parseRgbColor(value) {
+  if (!value) return null;
+  const match = value.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if (!match) return null;
+  const r = Number(match[1]);
+  const g = Number(match[2]);
+  const b = Number(match[3]);
+  if (![r, g, b].every((n) => Number.isFinite(n))) return null;
+  return { r, g, b };
+}
+
+function relativeLuminance({ r, g, b }) {
+  const toLinear = (c) => {
+    const s = c / 255;
+    return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  const R = toLinear(r);
+  const G = toLinear(g);
+  const B = toLinear(b);
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+}
+
+function detectYouTubeTheme() {
+  const app = document.querySelector("ytd-app");
+  if (app?.hasAttribute("dark")) return "dark";
+  if (document.documentElement?.hasAttribute("dark")) return "dark";
+
+  const candidates = [app, document.body, document.documentElement].filter(Boolean);
+  for (const node of candidates) {
+    const color = parseRgbColor(getComputedStyle(node).backgroundColor);
+    if (!color) continue;
+    return relativeLuminance(color) < 0.2 ? "dark" : "light";
+  }
+
+  return "light";
+}
+
 function clampColumns(value) {
   const number = Number(value);
   if (!Number.isFinite(number)) return DEFAULT_COLUMNS;
@@ -177,8 +214,16 @@ async function loadAndApply() {
 }
 
 browser.runtime.onMessage.addListener((message) => {
-  if (!message || message.type !== "set_columns") return;
-  applyColumns(message.columns);
+  if (!message) return;
+
+  if (message.type === "set_columns") {
+    applyColumns(message.columns);
+    return;
+  }
+
+  if (message.type === "get_theme") {
+    return Promise.resolve({ ok: true, theme: detectYouTubeTheme() });
+  }
 });
 
 browser.storage.onChanged.addListener((changes, areaName) => {

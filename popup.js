@@ -4,6 +4,12 @@ const columnRange = document.getElementById("columnRange");
 const applyBtn = document.getElementById("applyBtn");
 const statusText = document.getElementById("statusText");
 
+function setTheme(theme) {
+  const isDark = theme === "dark";
+  document.body.classList.toggle("theme-dark", isDark);
+  document.body.classList.toggle("theme-light", !isDark);
+}
+
 function setStatus(message) {
   statusText.textContent = message;
 }
@@ -22,6 +28,22 @@ async function getActiveYouTubeTabId() {
   }
 
   return tab.id;
+}
+
+async function applyThemeFromActiveTab() {
+  try {
+    const tabId = await getActiveYouTubeTabId();
+    const response = await browser.tabs.sendMessage(tabId, { type: "get_theme" });
+    if (response && response.ok === true && (response.theme === "dark" || response.theme === "light")) {
+      setTheme(response.theme);
+      return;
+    }
+  } catch {
+    // Ignore and fall back to OS preference.
+  }
+
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  setTheme(prefersDark ? "dark" : "light");
 }
 
 async function loadSavedColumns() {
@@ -55,3 +77,5 @@ applyBtn.addEventListener("click", async () => {
 loadSavedColumns().catch((error) => {
   setStatus(`Init failed: ${error.message}`);
 });
+
+applyThemeFromActiveTab();
