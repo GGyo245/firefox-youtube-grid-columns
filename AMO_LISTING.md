@@ -20,7 +20,8 @@
 
 권한 안내:
 - storage: 열 개수 설정 저장
-- youtube.com 탭 접근: 유튜브 페이지 레이아웃 적용
+- tabs: 현재 활성 탭에 즉시 적용
+- www.youtube.com (홈/주요 피드): 유튜브 페이지에서 레이아웃 적용
 
 개인정보:
 - 데이터 수집 없음
@@ -37,7 +38,8 @@ Features:
 
 Permissions:
 - storage: save column setting
-- youtube.com tab access: apply layout on YouTube pages
+- tabs: apply settings to the active tab
+- www.youtube.com (Home and main feed pages): apply layout changes on supported pages
 
 Privacy:
 - No data collection
