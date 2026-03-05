@@ -23,11 +23,12 @@
     "storage",
     "tabs",
     "*://www.youtube.com/",
-    "*://www.youtube.com/feed/subscriptions",
-    "*://www.youtube.com/feed/trending",
-    "*://www.youtube.com/feed/explore",
-    "*://www.youtube.com/feed/library",
-    "*://www.youtube.com/feed/history"
+    "*://www.youtube.com/?*",
+    "*://www.youtube.com/feed/subscriptions*",
+    "*://www.youtube.com/feed/trending*",
+    "*://www.youtube.com/feed/explore*",
+    "*://www.youtube.com/feed/library*",
+    "*://www.youtube.com/feed/history*"
   ],
   "browser_action": {
     "default_title": "YT Grid Columns",
@@ -37,11 +38,12 @@
     {
       "matches": [
         "*://www.youtube.com/",
-        "*://www.youtube.com/feed/subscriptions",
-        "*://www.youtube.com/feed/trending",
-        "*://www.youtube.com/feed/explore",
-        "*://www.youtube.com/feed/library",
-        "*://www.youtube.com/feed/history"
+        "*://www.youtube.com/?*",
+        "*://www.youtube.com/feed/subscriptions*",
+        "*://www.youtube.com/feed/trending*",
+        "*://www.youtube.com/feed/explore*",
+        "*://www.youtube.com/feed/library*",
+        "*://www.youtube.com/feed/history*"
       ],
       "js": ["content.js"],
       "run_at": "document_idle"

@@ -15,9 +15,9 @@ The distributed add-on is built by zipping the source files as-is.
 1. Open a terminal in this folder:
    `cd /home/geegun/firefox-youtube-grid-control`
 2. Build add-on package:
-   `zip -r youtube-grid-columns.xpi manifest.json content.js popup.html popup.css popup.js icon.svg README.md DEV.md AMO_LISTING.md LICENSE`
+   `zip -r youtube-grid-columns.xpi manifest.json content.js popup.html popup.css popup.js icon.svg README.md DEV.md AMO_LISTING.md CHANGELOG.md LICENSE`
 3. Build source archive for AMO review:
-   `zip -r source-code.zip .editorconfig .gitignore manifest.json content.js popup.html popup.css popup.js icon.svg README.md DEV.md AMO_LISTING.md LICENSE`
+   `zip -r source-code.zip .editorconfig .gitignore manifest.json content.js popup.html popup.css popup.js icon.svg README.md DEV.md AMO_LISTING.md CHANGELOG.md LICENSE`
 
 ## Load Locally (Firefox)
 

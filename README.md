@@ -1,6 +1,6 @@
 # Firefox YouTube Grid Columns Controller
 
-Control how many videos appear per row on YouTube home pages in Firefox (2 to 8 columns).
+Control how many videos appear per row on YouTube Home and main feed pages in Firefox (2 to 8 columns).
 
 ## Features
 
@@ -8,6 +8,7 @@ Control how many videos appear per row on YouTube home pages in Firefox (2 to 8 
 - Apply changes instantly from the popup slider
 - Automatically save and reuse your selected value
 - Hide Shorts shelves to keep the main video grid clean
+- Hide in-feed sponsored/ad tiles on supported pages
 
 ## Usage
 
@@ -24,7 +25,8 @@ Control how many videos appear per row on YouTube home pages in Firefox (2 to 8 
 ## Permissions
 
 - `storage`: save your column setting
-- `*://www.youtube.com/*`: apply layout changes on YouTube pages
+- `tabs`: apply settings to the active YouTube tab
+- `www.youtube.com` (Home and main feed pages): apply layout changes on supported pages
 
 ## Development
 
