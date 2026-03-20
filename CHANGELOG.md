@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.5
+## 0.1.6
 - Show a refresh hint when the popup cannot connect to the YouTube page
 - Hide German breaking news shelves (for example, "Eilmeldungen")
 

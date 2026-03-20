@@ -46,7 +46,7 @@ Privacy:
 ## Category Suggestion
 - Shopping / Search Tools / Appearance
 
-## Release Notes (0.1.5)
+## Release Notes (0.1.6)
 - Show a refresh hint when the popup cannot connect to the YouTube page
 - Hide German breaking news shelves (for example, "Eilmeldungen")
 
