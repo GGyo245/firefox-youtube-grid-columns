@@ -4,19 +4,20 @@
 - YouTube Grid Columns Controller
 
 ## Summary (KO)
-- 유튜브 홈 그리드의 한 줄 영상 개수를 2~8개로 조절하고 쇼츠 선반을 숨기는 확장.
+- 유튜브 홈/주요 피드에서 그리드 열(2~8)을 조절하고 쇼츠 선반과 스폰서 타일을 숨기는 확장.
 
 ## Summary (EN)
-- Control YouTube home grid columns from 2 to 8 videos per row and hide Shorts shelves.
+- Control YouTube grid columns (2 to 8) on Home/main feed pages and hide Shorts shelves and sponsored tiles.
 
 ## Description (KO)
-유튜브 홈 화면에서 한 줄에 보이는 영상 개수를 원하는 값으로 바꿀 수 있습니다.
+유튜브 홈/주요 피드 화면에서 한 줄에 보이는 영상 개수를 원하는 값으로 바꿀 수 있습니다.
 
 주요 기능:
 - 한 줄 영상 개수 2~8개 조절
 - 팝업 슬라이더로 즉시 적용
 - 설정 자동 저장
 - 쇼츠 선반 섹션 숨김
+- 스폰서/광고 타일 숨김
 
 필수 권한:
 - 브라우저 탭에 접근
@@ -27,13 +28,14 @@
 - 외부 서버 통신 없음
 
 ## Description (EN)
-Adjust how many videos appear in each row on YouTube home pages.
+Adjust how many videos appear in each row on YouTube Home and main feed pages.
 
 Features:
 - Set 2 to 8 columns
 - Apply instantly from popup slider
 - Setting is saved automatically
 - Shorts shelves are hidden
+- Sponsored/ad tiles are hidden
 
 Required permissions:
 - Access browser tabs

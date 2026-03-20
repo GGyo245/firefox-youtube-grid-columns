@@ -34,4 +34,4 @@ For local loading, testing, and release workflow, see [DEV.md](DEV.md).
 
 ## Credits
 
- Built with Codex (GPT).
+Built with Codex (GPT).
