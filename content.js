@@ -130,7 +130,17 @@ function isShortsItem(item) {
       ?.toLowerCase();
     const isNewsShelf = Boolean(
       shelfTitle &&
-        ["뉴스 속보", "breaking news", "top news", "news", "ニュース速報", "速報ニュース"].some((keyword) =>
+        [
+          "뉴스 속보",
+          "breaking news",
+          "top news",
+          "news",
+          "ニュース速報",
+          "速報ニュース",
+          "eilmeldungen",
+          "schlagzeilen",
+          "top-meldungen"
+        ].some((keyword) =>
           shelfTitle.includes(keyword)
         )
     );
