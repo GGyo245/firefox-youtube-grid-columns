@@ -1,9 +1,11 @@
 # Changelog
 
 ## 0.1.6
-- Show a refresh hint when the popup cannot connect to the YouTube page
 - Hide German breaking news shelves (for example, "Eilmeldungen")
 - Hide the top masthead sponsored video section on supported pages
+
+## 0.1.5
+- Show a refresh hint when the popup cannot connect to the YouTube page
 
 ## 0.1.4
 - Scope extension to YouTube home and main feed pages only (reduced match patterns)
