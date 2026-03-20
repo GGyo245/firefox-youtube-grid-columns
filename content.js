@@ -107,6 +107,12 @@ function applyColumns(columns) {
     ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > .${HIDE_ADS_CLASS} {
       display: none !important;
     }
+
+    ytd-rich-grid-renderer > #masthead-ad,
+    ytd-rich-grid-renderer > #masthead-ad ytd-ad-slot-renderer,
+    ytd-rich-grid-renderer > #masthead-ad ytd-page-top-ad-layout-renderer {
+      display: none !important;
+    }
   `;
 
   markSpecialItems();
