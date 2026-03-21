@@ -145,7 +145,8 @@ function isShortsItem(item) {
           "速報ニュース",
           "eilmeldungen",
           "schlagzeilen",
-          "top-meldungen"
+          "top-meldungen",
+          "срочные новости"
         ].some((keyword) =>
           shelfTitle.includes(keyword)
         )

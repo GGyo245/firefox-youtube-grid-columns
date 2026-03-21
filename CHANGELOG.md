@@ -2,6 +2,7 @@
 
 ## 0.1.6
 - Hide German breaking news shelves (for example, "Eilmeldungen")
+- Hide Russian breaking news shelves (for example, "Срочные новости")
 - Hide the top masthead sponsored video section on supported pages
 
 ## 0.1.5
