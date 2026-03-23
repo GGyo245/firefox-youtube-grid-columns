@@ -8,6 +8,7 @@ const HIDE_ADS_CLASS = "yt-grid-columns-controller-hide-ads";
 let gridObserver = null;
 let rootObserver = null;
 let currentColumns = DEFAULT_COLUMNS;
+let hasLoadedColumns = false;
 const EXCLUDED_PATH_PREFIXES = [
   "/feed/you",
   "/watch",
@@ -172,6 +173,14 @@ function applyColumns(columns) {
   ensureGridObserver();
 }
 
+async function syncColumnsFromStorage() {
+  const result = await browser.storage.local.get({ youtubeColumns: DEFAULT_COLUMNS });
+  const safeColumns = clampColumns(result.youtubeColumns);
+  currentColumns = safeColumns;
+  hasLoadedColumns = true;
+  applyColumns(safeColumns);
+}
+
 function isFullWidthItem(item) {
   return Boolean(
     item.querySelector("ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-statement-banner-renderer")
@@ -300,7 +309,7 @@ function ensureRootObserver() {
       return;
     }
 
-    if (getGridContainer()) {
+    if (hasLoadedColumns && getGridContainer()) {
       applyColumns(currentColumns);
     }
   });
@@ -312,8 +321,7 @@ function ensureRootObserver() {
 }
 
 async function loadAndApply() {
-  const result = await browser.storage.local.get({ youtubeColumns: DEFAULT_COLUMNS });
-  applyColumns(result.youtubeColumns);
+  await syncColumnsFromStorage();
 }
 
 browser.runtime.onMessage.addListener((message) => {
@@ -332,18 +340,24 @@ browser.runtime.onMessage.addListener((message) => {
 browser.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== "local") return;
   if (!changes.youtubeColumns) return;
+  hasLoadedColumns = true;
   applyColumns(changes.youtubeColumns.newValue);
 });
 
-document.addEventListener("yt-navigate-finish", () => {
+document.addEventListener("yt-navigate-finish", async () => {
   if (!isEligiblePage()) {
     cleanupGridStyles();
     return;
   }
-  applyColumns(currentColumns);
+  if (!hasLoadedColumns) {
+    await syncColumnsFromStorage();
+    return;
+  }
+  await syncColumnsFromStorage();
 });
 
 ensureRootObserver();
 loadAndApply().catch(() => {
+  hasLoadedColumns = true;
   applyColumns(DEFAULT_COLUMNS);
 });

@@ -50,6 +50,7 @@ Privacy:
 
 ## Release Notes (0.1.9)
 - Keep the selected grid layout when navigating from Home variants such as `/?bp=...` back to the main Home page
+- Preserve the stored column setting instead of falling back to the default 4-column layout during Home navigation
 
 ## Release Notes (0.1.8)
 - Apply the grid layout across YouTube feed-style pages, including Home variants such as `/?bp=...`
