@@ -86,8 +86,8 @@ function isExcludedPath(pathname = window.location.pathname) {
   );
 }
 
-function shouldApplyGrid() {
-  return !isExcludedPath() && Boolean(getGridContainer());
+function isEligiblePage() {
+  return !isExcludedPath();
 }
 
 function cleanupGridStyles() {
@@ -108,10 +108,13 @@ function cleanupGridStyles() {
 }
 
 function applyColumns(columns) {
-  if (!shouldApplyGrid()) {
+  if (!isEligiblePage()) {
     cleanupGridStyles();
     return;
   }
+
+  const container = getGridContainer();
+  if (!container) return;
 
   const safeColumns = clampColumns(columns);
   currentColumns = safeColumns;
@@ -232,7 +235,7 @@ function isAdItem(item) {
 }
 
 function markSpecialItems() {
-  if (!shouldApplyGrid()) return;
+  if (!isEligiblePage()) return;
 
   const container = getGridContainer();
   if (!container) return;
@@ -263,7 +266,7 @@ function markSpecialItems() {
 }
 
 function ensureGridObserver() {
-  if (!shouldApplyGrid()) {
+  if (!isEligiblePage()) {
     if (gridObserver) {
       gridObserver.disconnect();
       gridObserver = null;
@@ -292,12 +295,14 @@ function ensureRootObserver() {
   if (rootObserver) return;
 
   rootObserver = new MutationObserver(() => {
-    if (!shouldApplyGrid()) {
+    if (!isEligiblePage()) {
       cleanupGridStyles();
       return;
     }
-    markSpecialItems();
-    ensureGridObserver();
+
+    if (getGridContainer()) {
+      applyColumns(currentColumns);
+    }
   });
 
   rootObserver.observe(document.documentElement, {
@@ -331,7 +336,7 @@ browser.storage.onChanged.addListener((changes, areaName) => {
 });
 
 document.addEventListener("yt-navigate-finish", () => {
-  if (!shouldApplyGrid()) {
+  if (!isEligiblePage()) {
     cleanupGridStyles();
     return;
   }

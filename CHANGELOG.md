@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.9
+- Keep the selected grid layout when navigating from Home variants such as `/?bp=...` back to the main Home page
+
 ## 0.1.8
 - Apply the grid layout across YouTube feed-style pages, including Home variants such as `/?bp=...`
 - Exclude non-feed pages and the You page (`/feed/you`) from grid styling
