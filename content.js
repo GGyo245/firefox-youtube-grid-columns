@@ -23,6 +23,27 @@ const EXCLUDED_PATH_PREFIXES = [
   "/post",
   "/hashtag"
 ];
+const NEWS_SHELF_KEYWORDS = [
+  "뉴스 속보",
+  "breaking news",
+  "top news",
+  "news",
+  "ニュース速報",
+  "速報ニュース",
+  "eilmeldungen",
+  "schlagzeilen",
+  "top-meldungen",
+  "срочные новости"
+];
+const SUBSCRIPTIONS_HIDDEN_SHELF_KEYWORDS = [
+  "shorts",
+  "관련성",
+  "최신순",
+  "relevance",
+  "relevant",
+  "latest",
+  "newest"
+];
 
 function parseRgbColor(value) {
   if (!value) return null;
@@ -187,29 +208,33 @@ function isFullWidthItem(item) {
   );
 }
 
+function getSectionTitle(item) {
+  const richShelfTitle = item
+    ?.querySelector(":scope > #content > ytd-rich-shelf-renderer #title")
+    ?.textContent;
+  const shelfTitle = item
+    ?.querySelector(":scope > #content > ytd-shelf-renderer #title")
+    ?.textContent;
+
+  return (richShelfTitle || shelfTitle || "").trim().toLowerCase();
+}
+
+function isSubscriptionsHiddenShelf(item) {
+  if (window.location.pathname !== "/feed/subscriptions") return false;
+  const title = getSectionTitle(item);
+  if (!title) return false;
+  return SUBSCRIPTIONS_HIDDEN_SHELF_KEYWORDS.some((keyword) => title.includes(keyword));
+}
+
 function isShortsItem(item) {
   if (!item) return false;
   const tagName = item.tagName?.toLowerCase();
 
   if (tagName === "ytd-rich-section-renderer") {
-    const shelfTitle = item
-      .querySelector(":scope > #content > ytd-rich-shelf-renderer #title")
-      ?.textContent?.trim()
-      ?.toLowerCase();
+    const shelfTitle = getSectionTitle(item);
     const isNewsShelf = Boolean(
       shelfTitle &&
-        [
-          "뉴스 속보",
-          "breaking news",
-          "top news",
-          "news",
-          "ニュース速報",
-          "速報ニュース",
-          "eilmeldungen",
-          "schlagzeilen",
-          "top-meldungen",
-          "срочные новости"
-        ].some((keyword) =>
+        NEWS_SHELF_KEYWORDS.some((keyword) =>
           shelfTitle.includes(keyword)
         )
     );
@@ -217,7 +242,7 @@ function isShortsItem(item) {
     return Boolean(
       item.querySelector(
         ":scope > #content > ytd-rich-shelf-renderer[is-shorts], :scope > #content > ytd-chips-shelf-with-video-shelf-renderer"
-      ) || isNewsShelf
+      ) || isNewsShelf || isSubscriptionsHiddenShelf(item)
     );
   }
 

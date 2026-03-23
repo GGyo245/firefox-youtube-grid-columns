@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.10
+- Hide the Shorts, Relevance, and Latest shelves on the Subscriptions page
+
 ## 0.1.9
 - Keep the selected grid layout when navigating from Home variants such as `/?bp=...` back to the main Home page
 - Fixed a bug that could reset the stored column setting to the default 4-column layout during Home navigation
