@@ -8,6 +8,20 @@ const HIDE_ADS_CLASS = "yt-grid-columns-controller-hide-ads";
 let gridObserver = null;
 let rootObserver = null;
 let currentColumns = DEFAULT_COLUMNS;
+const EXCLUDED_PATH_PREFIXES = [
+  "/feed/you",
+  "/watch",
+  "/shorts",
+  "/playlist",
+  "/results",
+  "/channel",
+  "/c/",
+  "/@",
+  "/live",
+  "/clip",
+  "/post",
+  "/hashtag"
+];
 
 function parseRgbColor(value) {
   if (!value) return null;
@@ -62,7 +76,43 @@ function ensureStyleTag() {
   return styleTag;
 }
 
+function getGridContainer() {
+  return document.querySelector("ytd-rich-grid-renderer > #contents");
+}
+
+function isExcludedPath(pathname = window.location.pathname) {
+  return EXCLUDED_PATH_PREFIXES.some((prefix) =>
+    pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+}
+
+function shouldApplyGrid() {
+  return !isExcludedPath() && Boolean(getGridContainer());
+}
+
+function cleanupGridStyles() {
+  if (gridObserver) {
+    gridObserver.disconnect();
+    gridObserver = null;
+  }
+
+  document.getElementById(STYLE_ID)?.remove();
+
+  const container = getGridContainer();
+  if (!container) return;
+
+  for (const child of Array.from(container.children)) {
+    child.classList.remove(HIDE_SHORTS_CLASS, HIDE_ADS_CLASS, FULL_WIDTH_CLASS);
+    child.style.removeProperty("display");
+  }
+}
+
 function applyColumns(columns) {
+  if (!shouldApplyGrid()) {
+    cleanupGridStyles();
+    return;
+  }
+
   const safeColumns = clampColumns(columns);
   currentColumns = safeColumns;
   const styleTag = ensureStyleTag();
@@ -74,7 +124,7 @@ function applyColumns(columns) {
       --yt-grid-columns-controller-row-gap: 24px;
     }
 
-    ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer {
+    ytd-rich-grid-renderer > #contents {
       display: grid !important;
       grid-template-columns: repeat(var(--yt-grid-columns-controller-count), minmax(0, 1fr)) !important;
       column-gap: var(--yt-grid-columns-controller-column-gap) !important;
@@ -85,7 +135,7 @@ function applyColumns(columns) {
       align-items: start !important;
     }
 
-    ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > ytd-rich-item-renderer {
+    ytd-rich-grid-renderer > #contents > ytd-rich-item-renderer {
       width: auto !important;
       max-width: none !important;
       min-width: 0 !important;
@@ -94,17 +144,17 @@ function applyColumns(columns) {
       padding: 0 !important;
     }
 
-    ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > ytd-rich-item-renderer.${FULL_WIDTH_CLASS} {
+    ytd-rich-grid-renderer > #contents > ytd-rich-item-renderer.${FULL_WIDTH_CLASS} {
       grid-column: 1 / -1 !important;
       width: 100% !important;
       max-width: 100% !important;
     }
 
-    ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > .${HIDE_SHORTS_CLASS} {
+    ytd-rich-grid-renderer > #contents > .${HIDE_SHORTS_CLASS} {
       display: none !important;
     }
 
-    ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer > .${HIDE_ADS_CLASS} {
+    ytd-rich-grid-renderer > #contents > .${HIDE_ADS_CLASS} {
       display: none !important;
     }
 
@@ -182,7 +232,9 @@ function isAdItem(item) {
 }
 
 function markSpecialItems() {
-  const container = document.querySelector("ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer");
+  if (!shouldApplyGrid()) return;
+
+  const container = getGridContainer();
   if (!container) return;
 
   const children = Array.from(container.children);
@@ -211,7 +263,15 @@ function markSpecialItems() {
 }
 
 function ensureGridObserver() {
-  const container = document.querySelector("ytd-rich-grid-renderer #contents.ytd-rich-grid-renderer");
+  if (!shouldApplyGrid()) {
+    if (gridObserver) {
+      gridObserver.disconnect();
+      gridObserver = null;
+    }
+    return;
+  }
+
+  const container = getGridContainer();
   if (!container) return;
 
   if (gridObserver) {
@@ -232,6 +292,10 @@ function ensureRootObserver() {
   if (rootObserver) return;
 
   rootObserver = new MutationObserver(() => {
+    if (!shouldApplyGrid()) {
+      cleanupGridStyles();
+      return;
+    }
     markSpecialItems();
     ensureGridObserver();
   });
@@ -267,6 +331,10 @@ browser.storage.onChanged.addListener((changes, areaName) => {
 });
 
 document.addEventListener("yt-navigate-finish", () => {
+  if (!shouldApplyGrid()) {
+    cleanupGridStyles();
+    return;
+  }
   applyColumns(currentColumns);
 });
 

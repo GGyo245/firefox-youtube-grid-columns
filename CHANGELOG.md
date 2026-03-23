@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.8
+- Stop applying the grid layout on the YouTube You page (`/feed/you`)
+
 ## 0.1.7
 - Hide Russian breaking news shelves (for example, "Срочные новости")
 
