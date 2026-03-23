@@ -49,7 +49,8 @@ Privacy:
 - Shopping / Search Tools / Appearance
 
 ## Release Notes (0.1.8)
-- Stop applying the grid layout on the YouTube You page (`/feed/you`)
+- Apply the grid layout across YouTube feed-style pages, including Home variants such as `/?bp=...`
+- Exclude non-feed pages and the You page (`/feed/you`) from grid styling
 
 ## Release Notes (0.1.7)
 - Hide Russian breaking news shelves (for example, "Срочные новости")
