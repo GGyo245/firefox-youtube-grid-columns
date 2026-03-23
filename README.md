@@ -10,6 +10,13 @@ Control how many videos appear per row on YouTube Home and main feed pages in Fi
 - Hide Shorts shelves to keep the main video grid clean
 - Hide in-feed sponsored/ad tiles on supported pages
 
+## Supported Languages
+
+- Breaking news shelf hiding:
+  Korean, English, Japanese, German, Russian
+- Subscriptions page shelf hiding:
+  Korean and Russian for Relevance/Latest shelves, plus Shorts/쇼츠 detection
+
 ## Usage
 
 1. Open a `youtube.com` page.

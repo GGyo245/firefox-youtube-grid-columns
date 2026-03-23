@@ -2,6 +2,8 @@
 
 ## 0.1.10
 - Hide the Shorts, Relevance, and Latest shelves on the Subscriptions page
+- Improve SPA handling for Subscriptions page shelf hiding
+- Document the currently supported shelf-hiding languages in the README
 
 ## 0.1.9
 - Keep the selected grid layout when navigating from Home variants such as `/?bp=...` back to the main Home page

@@ -9,6 +9,9 @@ let gridObserver = null;
 let rootObserver = null;
 let currentColumns = DEFAULT_COLUMNS;
 let hasLoadedColumns = false;
+let applyRetryTimers = [];
+let markSpecialItemsFrame = 0;
+let navigationInProgress = false;
 const EXCLUDED_PATH_PREFIXES = [
   "/feed/you",
   "/watch",
@@ -37,12 +40,11 @@ const NEWS_SHELF_KEYWORDS = [
 ];
 const SUBSCRIPTIONS_HIDDEN_SHELF_KEYWORDS = [
   "shorts",
+  "쇼츠",
   "관련성",
   "최신순",
-  "relevance",
-  "relevant",
-  "latest",
-  "newest"
+  "самые актуальные",
+  "новые"
 ];
 
 function parseRgbColor(value) {
@@ -113,6 +115,15 @@ function isEligiblePage() {
 }
 
 function cleanupGridStyles() {
+  for (const timerId of applyRetryTimers) {
+    window.clearTimeout(timerId);
+  }
+  applyRetryTimers = [];
+  if (markSpecialItemsFrame) {
+    window.cancelAnimationFrame(markSpecialItemsFrame);
+    markSpecialItemsFrame = 0;
+  }
+
   if (gridObserver) {
     gridObserver.disconnect();
     gridObserver = null;
@@ -120,13 +131,14 @@ function cleanupGridStyles() {
 
   document.getElementById(STYLE_ID)?.remove();
 
-  const container = getGridContainer();
-  if (!container) return;
-
-  for (const child of Array.from(container.children)) {
-    child.classList.remove(HIDE_SHORTS_CLASS, HIDE_ADS_CLASS, FULL_WIDTH_CLASS);
-    child.style.removeProperty("display");
-  }
+  document
+    .querySelectorAll(`.${FULL_WIDTH_CLASS}, .${HIDE_SHORTS_CLASS}, .${HIDE_ADS_CLASS}`)
+    .forEach((node) => {
+      node.classList.remove(FULL_WIDTH_CLASS, HIDE_SHORTS_CLASS, HIDE_ADS_CLASS);
+      if (node instanceof HTMLElement) {
+        node.style.removeProperty("display");
+      }
+    });
 }
 
 function applyColumns(columns) {
@@ -202,6 +214,50 @@ async function syncColumnsFromStorage() {
   applyColumns(safeColumns);
 }
 
+function clearApplyRetryTimers() {
+  for (const timerId of applyRetryTimers) {
+    window.clearTimeout(timerId);
+  }
+  applyRetryTimers = [];
+}
+
+function scheduleApplyColumns(columns) {
+  clearApplyRetryTimers();
+
+  for (const delay of [0, 200, 1000]) {
+    const timerId = window.setTimeout(() => {
+      applyColumns(columns);
+      applyRetryTimers = applyRetryTimers.filter((id) => id !== timerId);
+    }, delay);
+    applyRetryTimers.push(timerId);
+  }
+}
+
+function scheduleMarkSpecialItems() {
+  if (markSpecialItemsFrame) return;
+
+  markSpecialItemsFrame = window.requestAnimationFrame(() => {
+    markSpecialItemsFrame = 0;
+    markSpecialItems();
+  });
+}
+
+function normalizeShelfTitle(value) {
+  return value?.replace(/\s+/g, " ").trim().toLowerCase() || "";
+}
+
+function scheduleSubscriptionsSectionRescan() {
+  if (window.location.pathname !== "/feed/subscriptions") return;
+
+  for (const delay of [0, 200, 1000]) {
+    window.setTimeout(() => {
+      if (!isEligiblePage() || !hasLoadedColumns) return;
+      scheduleMarkSpecialItems();
+      ensureGridObserver();
+    }, delay);
+  }
+}
+
 function isFullWidthItem(item) {
   return Boolean(
     item.querySelector("ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-statement-banner-renderer")
@@ -209,14 +265,9 @@ function isFullWidthItem(item) {
 }
 
 function getSectionTitle(item) {
-  const richShelfTitle = item
-    ?.querySelector(":scope > #content > ytd-rich-shelf-renderer #title")
-    ?.textContent;
-  const shelfTitle = item
-    ?.querySelector(":scope > #content > ytd-shelf-renderer #title")
-    ?.textContent;
-
-  return (richShelfTitle || shelfTitle || "").trim().toLowerCase();
+  const richShelfTitle = item?.querySelector(":scope > #content > ytd-rich-shelf-renderer #title")?.textContent;
+  const shelfTitle = item?.querySelector(":scope > #content > ytd-shelf-renderer #title")?.textContent;
+  return normalizeShelfTitle(richShelfTitle || shelfTitle);
 }
 
 function isSubscriptionsHiddenShelf(item) {
@@ -226,32 +277,29 @@ function isSubscriptionsHiddenShelf(item) {
   return SUBSCRIPTIONS_HIDDEN_SHELF_KEYWORDS.some((keyword) => title.includes(keyword));
 }
 
-function isShortsItem(item) {
+function isHiddenSectionItem(item) {
   if (!item) return false;
   const tagName = item.tagName?.toLowerCase();
+  const shelfTitle = getSectionTitle(item);
+  const isNewsShelf = Boolean(
+    shelfTitle &&
+      NEWS_SHELF_KEYWORDS.some((keyword) =>
+        shelfTitle.includes(keyword)
+      )
+  );
+  const isSubscriptionsShelf = isSubscriptionsHiddenShelf(item);
+  const hasShortsStructure = Boolean(
+    item.querySelector(
+      ":scope > #content > ytd-rich-shelf-renderer[is-shorts], :scope > #content > ytd-chips-shelf-with-video-shelf-renderer, :scope > #content > ytd-rich-shelf-renderer a[href*='/feed/subscriptions/shorts'], :scope > #content > ytd-rich-shelf-renderer a[href*='/shorts/'], :scope ytd-rich-shelf-renderer[is-shorts], :scope ytm-shorts-lockup-view-model-v2, :scope ytm-shorts-lockup-view-model, :scope a[href*='/shorts/']"
+    )
+  );
 
   if (tagName === "ytd-rich-section-renderer") {
-    const shelfTitle = getSectionTitle(item);
-    const isNewsShelf = Boolean(
-      shelfTitle &&
-        NEWS_SHELF_KEYWORDS.some((keyword) =>
-          shelfTitle.includes(keyword)
-        )
-    );
-
-    return Boolean(
-      item.querySelector(
-        ":scope > #content > ytd-rich-shelf-renderer[is-shorts], :scope > #content > ytd-chips-shelf-with-video-shelf-renderer"
-      ) || isNewsShelf || isSubscriptionsHiddenShelf(item)
-    );
+    return hasShortsStructure || shelfTitle === "shorts" || isNewsShelf || isSubscriptionsShelf;
   }
 
   if (tagName === "ytd-rich-item-renderer") {
-    return Boolean(
-      item.querySelector(
-        ":scope ytd-rich-shelf-renderer[is-shorts], :scope ytm-shorts-lockup-view-model-v2, :scope ytm-shorts-lockup-view-model, :scope a[href*='/shorts/']"
-      )
-    );
+    return hasShortsStructure || isSubscriptionsShelf;
   }
 
   if (item.matches("ytd-reel-shelf-renderer")) return true;
@@ -271,26 +319,28 @@ function isAdItem(item) {
 function markSpecialItems() {
   if (!isEligiblePage()) return;
 
-  const container = getGridContainer();
-  if (!container) return;
+  const sectionItems = Array.from(
+    document.querySelectorAll("ytd-rich-section-renderer, ytd-rich-item-renderer, ytd-reel-shelf-renderer")
+  );
+  if (!sectionItems.length) return;
 
-  const children = Array.from(container.children);
-  for (const child of children) {
-    const shorts = isShortsItem(child);
-    const ad = isAdItem(child);
-    child.classList.toggle(HIDE_SHORTS_CLASS, shorts);
-    child.classList.toggle(HIDE_ADS_CLASS, ad);
+  for (const item of sectionItems) {
+    const shorts = isHiddenSectionItem(item);
+    const ad = isAdItem(item);
+    item.classList.toggle(HIDE_SHORTS_CLASS, shorts);
+    item.classList.toggle(HIDE_ADS_CLASS, ad);
+
     if (shorts || ad) {
-      child.style.setProperty("display", "none", "important");
-    } else {
-      child.style.removeProperty("display");
+      if (item instanceof HTMLElement) {
+        item.style.setProperty("display", "none", "important");
+      }
+    } else if (item instanceof HTMLElement) {
+      item.style.removeProperty("display");
     }
   }
 
-  const items = children.filter(
-    (node) => node.tagName && node.tagName.toLowerCase() === "ytd-rich-item-renderer"
-  );
-  for (const item of items) {
+  const richItems = Array.from(document.querySelectorAll("ytd-rich-item-renderer"));
+  for (const item of richItems) {
     if (item.classList.contains(HIDE_SHORTS_CLASS) || item.classList.contains(HIDE_ADS_CLASS)) {
       item.classList.remove(FULL_WIDTH_CLASS);
       continue;
@@ -301,9 +351,8 @@ function markSpecialItems() {
 
 function ensureGridObserver() {
   if (!isEligiblePage()) {
-    if (gridObserver) {
-      gridObserver.disconnect();
-      gridObserver = null;
+    if (!navigationInProgress) {
+      cleanupGridStyles();
     }
     return;
   }
@@ -316,12 +365,14 @@ function ensureGridObserver() {
   }
 
   gridObserver = new MutationObserver(() => {
-    markSpecialItems();
+    scheduleMarkSpecialItems();
   });
 
   gridObserver.observe(container, {
     childList: true,
-    subtree: true
+    subtree: true,
+    attributes: true,
+    characterData: true
   });
 }
 
@@ -330,13 +381,14 @@ function ensureRootObserver() {
 
   rootObserver = new MutationObserver(() => {
     if (!isEligiblePage()) {
-      cleanupGridStyles();
+      if (!navigationInProgress) {
+        cleanupGridStyles();
+      }
       return;
     }
 
-    if (hasLoadedColumns && getGridContainer()) {
-      applyColumns(currentColumns);
-    }
+    scheduleMarkSpecialItems();
+    ensureGridObserver();
   });
 
   rootObserver.observe(document.documentElement, {
@@ -346,7 +398,11 @@ function ensureRootObserver() {
 }
 
 async function loadAndApply() {
-  await syncColumnsFromStorage();
+  const result = await browser.storage.local.get({ youtubeColumns: DEFAULT_COLUMNS });
+  const safeColumns = clampColumns(result.youtubeColumns);
+  currentColumns = safeColumns;
+  hasLoadedColumns = true;
+  scheduleApplyColumns(safeColumns);
 }
 
 browser.runtime.onMessage.addListener((message) => {
@@ -366,19 +422,30 @@ browser.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== "local") return;
   if (!changes.youtubeColumns) return;
   hasLoadedColumns = true;
-  applyColumns(changes.youtubeColumns.newValue);
+  scheduleApplyColumns(changes.youtubeColumns.newValue);
+});
+
+document.addEventListener("yt-navigate-start", () => {
+  navigationInProgress = true;
+  scheduleMarkSpecialItems();
+  scheduleApplyColumns(currentColumns);
 });
 
 document.addEventListener("yt-navigate-finish", async () => {
+  navigationInProgress = false;
   if (!isEligiblePage()) {
     cleanupGridStyles();
     return;
   }
   if (!hasLoadedColumns) {
     await syncColumnsFromStorage();
+    scheduleSubscriptionsSectionRescan();
     return;
   }
   await syncColumnsFromStorage();
+  scheduleApplyColumns(currentColumns);
+  scheduleMarkSpecialItems();
+  scheduleSubscriptionsSectionRescan();
 });
 
 ensureRootObserver();
