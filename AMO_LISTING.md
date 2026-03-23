@@ -48,6 +48,10 @@ Privacy:
 ## Category Suggestion
 - Shopping / Search Tools / Appearance
 
+## Release Notes (0.1.11)
+- Fixed a bug where the Subscriptions page shelf hiding could miss English Relevance/Latest sections
+- Restore the documented five-language support for Subscriptions page shelf hiding (Korean, English, Japanese, German, Russian)
+
 ## Release Notes (0.1.10)
 - Hide the Shorts, Relevance, and Latest shelves on the Subscriptions page
 - Improve SPA handling for Subscriptions page shelf hiding

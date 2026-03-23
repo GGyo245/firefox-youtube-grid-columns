@@ -41,8 +41,14 @@ const NEWS_SHELF_KEYWORDS = [
 const SUBSCRIPTIONS_HIDDEN_SHELF_KEYWORDS = [
   "shorts",
   "쇼츠",
+  "latest",
+  "most relevant",
   "관련성",
   "최신순",
+  "新しい順",
+  "関連が強い",
+  "neueste",
+  "relevanteste",
   "самые актуальные",
   "новые"
 ];

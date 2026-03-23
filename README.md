@@ -15,7 +15,7 @@ Control how many videos appear per row on YouTube Home and main feed pages in Fi
 - Breaking news shelf hiding:
   Korean, English, Japanese, German, Russian
 - Subscriptions page shelf hiding:
-  Korean and Russian for Relevance/Latest shelves, plus Shorts/쇼츠 detection
+  Korean, English, Japanese, German, Russian for Relevance/Latest shelves, plus Shorts/쇼츠 detection
 
 ## Usage
 
